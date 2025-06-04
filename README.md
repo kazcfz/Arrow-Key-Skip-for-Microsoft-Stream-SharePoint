@@ -9,3 +9,9 @@
 
 By default, <kbd>Alt</kbd> + <kbd>J</kbd>, <kbd>Alt</kbd> + <kbd>L</kbd>, <kbd>Alt</kbd> + <kbd>←</kbd>, <kbd>Alt</kbd> + <kbd>→</kbd> were the only keyboard shortcuts to skip.<br>
 This script allows video skipping using left/right arrow keys in Microsoft Stream/SharePoint
+<br><br>
+
+## ⬇️ Installation
+*See [Installing User Scripts](https://greasyfork.org/en/help/installing-user-scripts) from Greasy Fork.<br>
+- (Pre-requisite) Installed a user script manager (Tampermonkey, Violentmonkey, Greasemonkey, etc.)
+1. Click [here](https://update.greasyfork.org/scripts/538268/Arrow%20Key%20Skip%20for%20Microsoft%20StreamSharePoint.user.js) to install the latest script from Greasy Fork
