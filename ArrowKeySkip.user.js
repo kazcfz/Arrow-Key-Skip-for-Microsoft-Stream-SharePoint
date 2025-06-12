@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Better Keyboard Shortcuts for Microsoft SharePoint
 // @namespace    http://tampermonkey.net/
-// @version      1.2.1
+// @version      1.3.0
 // @description  Simpler keyboard shorcuts with visual indicators for Microsoft SharePoint videos
 // @author       kazcfz
 // @include      https://*.sharepoint.com/*
@@ -17,10 +17,8 @@
  
     // Wait until .oneplayer-root exists in the DOM, then run callback with it
     function waitForOnePlayerRoot(callback) {
-        console.log("waiting");
         const root = document.querySelector('.oneplayer-root') || document.querySelector('.OnePlayer-container');
         if (root) {
-            console.log("found");
             callback(root);
             return;
         }
@@ -35,7 +33,6 @@
     }
  
     waitForOnePlayerRoot(videoRoot => {
-        console.log("executing");
         if (getComputedStyle(videoRoot).position === 'static')
             videoRoot.style.position = 'relative';
  
@@ -63,29 +60,29 @@
         videoRoot.appendChild(skipOverlay);
  
         // Overlay to indicate Volume
-        const volumeOverlay = document.createElement('div');
-        volumeOverlay.style.position = 'absolute';
-        volumeOverlay.style.top = '10%';
-        volumeOverlay.style.left = '0';
-        volumeOverlay.style.right = '0';
-        volumeOverlay.style.margin = 'auto';
-        volumeOverlay.style.padding = '7px 11px';
-        volumeOverlay.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
-        volumeOverlay.style.borderRadius = '5px';
-        volumeOverlay.style.pointerEvents = 'none';
-        volumeOverlay.style.opacity = '0';
-        volumeOverlay.style.transition = 'opacity 0.015s ease';
-        volumeOverlay.style.zIndex = '9999';
-        volumeOverlay.style.userSelect = 'none';
-        volumeOverlay.style.display = 'flex';
-        volumeOverlay.style.flexDirection = 'column';
-        volumeOverlay.style.alignItems = 'center';
-        volumeOverlay.style.justifyContent = 'center';
-        volumeOverlay.style.gap = '0.2em';
-        volumeOverlay.style.width = '50px';
-        volumeOverlay.style.minHeight = '30px';
-        volumeOverlay.style.textAlign = 'center';
-        videoRoot.appendChild(volumeOverlay);
+        const topMiddleOverlay = document.createElement('div');
+        topMiddleOverlay.style.position = 'absolute';
+        topMiddleOverlay.style.top = '10%';
+        topMiddleOverlay.style.left = '0';
+        topMiddleOverlay.style.right = '0';
+        topMiddleOverlay.style.margin = 'auto';
+        topMiddleOverlay.style.padding = '7px 11px';
+        topMiddleOverlay.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
+        topMiddleOverlay.style.borderRadius = '5px';
+        topMiddleOverlay.style.pointerEvents = 'none';
+        topMiddleOverlay.style.opacity = '0';
+        topMiddleOverlay.style.transition = 'opacity 0.015s ease';
+        topMiddleOverlay.style.zIndex = '9999';
+        topMiddleOverlay.style.userSelect = 'none';
+        topMiddleOverlay.style.display = 'flex';
+        topMiddleOverlay.style.flexDirection = 'column';
+        topMiddleOverlay.style.alignItems = 'center';
+        topMiddleOverlay.style.justifyContent = 'center';
+        topMiddleOverlay.style.gap = '0.2em';
+        topMiddleOverlay.style.width = '50px';
+        topMiddleOverlay.style.minHeight = '30px';
+        topMiddleOverlay.style.textAlign = 'center';
+        videoRoot.appendChild(topMiddleOverlay);
  
         // Overlay to indicate Play/Pause
         const centerOverlay = document.createElement('div');
@@ -116,12 +113,12 @@
         centerOverlay.appendChild(centerSymbol);
  
         // Overlay text for current volume
-        const volumeText = document.createElement('div');
-        volumeText.style.fontSize = '17px';
-        volumeText.style.fontWeight = '500';
-        volumeText.style.color = 'rgba(255,255,255,0.85)';
-        volumeText.style.userSelect = 'none';
-        volumeOverlay.appendChild(volumeText);
+        const topMiddleText = document.createElement('div');
+        topMiddleText.style.fontSize = '17px';
+        topMiddleText.style.fontWeight = '500';
+        topMiddleText.style.color = 'rgba(255,255,255,0.85)';
+        topMiddleText.style.userSelect = 'none';
+        topMiddleOverlay.appendChild(topMiddleText);
  
         // Overlay container for left/right triangles
         const trianglesContainer = document.createElement('div');
@@ -149,7 +146,7 @@
         skipOverlay.appendChild(secondsText);
  
         let hideTimeoutSkipOverlay;
-        let hideTimeoutVolumeOverlay;
+        let hideTimeoutTopMiddleOverlay;
         let hideTimeoutCenterOverlay;
         let animTimeouts = [];
  
@@ -250,30 +247,30 @@
             centerOverlay.style.opacity = '1';
  
             hideTimeoutCenterOverlay = setTimeout(() => {
-                centerOverlay.style.transition = 'width 0.6s ease, height 0.6s ease, font-size 0.6s ease, opacity 0.6s ease';
+                centerOverlay.style.transition = 'width 0.75s ease, height 0.75s ease, font-size 0.75s ease, opacity 0.75s ease';
                 centerOverlay.style.width = `${parseFloat(getComputedStyle(centerOverlay).width) + 25}px`;
                 centerOverlay.style.height = `${parseFloat(getComputedStyle(centerOverlay).height) + 25}px`;
                 centerOverlay.style.fontSize = `${parseFloat(getComputedStyle(centerOverlay).fontSize) + 22.5}px`;
                 centerOverlay.style.opacity = '0';
-            }, 60);
+            }, 50);
  
             centerSymbol.textContent = symbol;
             if (symbol === '🔊' || symbol === '🔇') {
                 centerSymbol.style.marginBottom = '9px';
                 centerSymbol.style.marginLeft = '5px';
-                centerOverlay.style.fontSize = '75px';
+                centerOverlay.style.fontSize = '60px';
             } else if (symbol === '🔉') {
                 centerSymbol.style.marginBottom = '9px';
                 centerSymbol.style.marginLeft = '0px';
-                centerOverlay.style.fontSize = '75px';
+                centerOverlay.style.fontSize = '60px';
             } else if (symbol === '▶') {
                 centerSymbol.style.marginBottom = '7px';
                 centerSymbol.style.marginLeft = '12px';
-                centerOverlay.style.fontSize = '55px';
+                centerOverlay.style.fontSize = '50px';
             } else if (symbol === '⏸') {
-                centerSymbol.style.marginBottom = '17px';
+                centerSymbol.style.marginBottom = '14px';
                 centerSymbol.style.marginLeft = '4px';
-                centerOverlay.style.fontSize = '68px';
+                centerOverlay.style.fontSize = '55px';
             }
         }
  
@@ -283,30 +280,84 @@
         // volume (base 𝑛) = (1 − 0.1 × 𝑛)^3, where 𝑛 = 0, 1, 2, ..., 10.
         // Alternatively, could just keep it to linear volume steps
         let currentVolumeStepCount = 0;
-        function displayVolume() {
-            const volumePercent = video.volume * 100;
-            if (volumePercent >= 1 || video.volume == 0)
-                volumeText.textContent = `${Math.round(volumePercent)}%`;
-            else
-                volumeText.textContent = `${volumePercent.toFixed(1)}%`;
+        function triggerTopMiddleText(action) {
+            if (action == 'volume') {
+                const volumePercent = video.volume * 100;
+                if (volumePercent >= 1 || video.volume == 0)
+                    topMiddleText.textContent = `${Math.round(volumePercent)}%`;
+                else
+                    topMiddleText.textContent = `${volumePercent.toFixed(1)}%`;
  
-            volumeOverlay.style.opacity = '1';
-            clearTimeout(hideTimeoutVolumeOverlay);
-            hideTimeoutVolumeOverlay = setTimeout(() => { volumeOverlay.style.opacity = '0'; }, 600);
+            } else if (action == 'speed') {
+                const speed = video.playbackRate;
+                topMiddleText.textContent = (speed % 1 === 0) ? `${speed}x` : `${speed.toFixed(2)}x`;
+                if (topMiddleText.textContent.endsWith('0x'))
+                    topMiddleText.textContent = `${speed.toFixed(1)}x`;
+            }
+ 
+            topMiddleOverlay.style.opacity = '1';
+            clearTimeout(hideTimeoutTopMiddleOverlay);
+            hideTimeoutTopMiddleOverlay = setTimeout(() => { topMiddleOverlay.style.opacity = '0'; }, 500);
         }
  
         document.addEventListener('keydown', e => {
             if (!video)
                 return;
-            if (e.altKey || e.ctrlKey || e.shiftKey || e.metaKey)
+            if (e.altKey || e.ctrlKey || e.metaKey)
                 return;
             if (document.activeElement && !isInOnePlayerRoot(document.activeElement))
                 return;
  
             e.preventDefault();
  
+            // Home to jump to start
+            if (e.code === 'Home')
+                video.currentTime = 0;
+ 
+            // End to jump to end
+            else if (e.code === 'End')
+                video.currentTime = video.duration;
+ 
+            // Period to skip to next frame
+            else if (e.code === 'Period' && !e.shiftKey)
+                video.currentTime = Math.min(video.duration, video.currentTime + (1/30));
+ 
+            // Comma to skip to previous frame
+            else if (e.code === 'Comma' && !e.shiftKey)
+                video.currentTime = Math.max(0, video.currentTime - (1/30));
+ 
+            // > to speed up
+            else if (e.key === '>') {
+                document.querySelector('[aria-description*="Alt + X"]').click();
+                const items = [...document.querySelectorAll('[role="menuitemradio"]')];
+                const currentIndex = items.findIndex(item => item.getAttribute('aria-checked') === 'true');
+ 
+                if (currentIndex > 0)
+                    items[currentIndex - 1].click();
+                else
+                    document.querySelector('[aria-description*="Alt + X"]').click();
+                triggerTopMiddleText('speed');
+            }
+ 
+            // < to slow down
+            else if (e.key === '<') {
+                document.querySelector('[aria-description*="Alt + Z"]').click();
+                const items = [...document.querySelectorAll('[role="menuitemradio"]')];
+                const currentIndex = items.findIndex(item => item.getAttribute('aria-checked') === 'true');
+ 
+                if (currentIndex < items.length - 1)
+                    items[currentIndex + 1].click();
+                else
+                    document.querySelector('[aria-description*="Alt + Z"]').click();
+                triggerTopMiddleText('speed');
+            }
+ 
+            // 0–9 to skip to 0%–90% of video
+            else if (/^Digit[0-9]$/.test(e.code))
+                video.currentTime = (video.duration * (parseInt(e.code.replace('Digit', ''), 10))) / 10;
+ 
             // → to skip forward
-            if (e.code === 'ArrowRight') {
+            else if (e.code === 'ArrowRight') {
                 video.currentTime = Math.min(video.duration, video.currentTime + secondsToSkip);
                 showAnimatedTriangles('right');
  
@@ -322,7 +373,7 @@
                     video.volume = Math.pow(1 - 0.1 * currentVolumeStepCount, 3);
                     //video.volume = Math.max(0, Math.min(1, Math.round((video.volume + 0.1) * 100) / 100));
                 }
-                displayVolume();
+                triggerTopMiddleText('volume');
                 triggerCenterSymbol('🔊');
  
             // ↓ to decrease volume
@@ -332,39 +383,67 @@
                     video.volume = Math.pow(1 - 0.1 * currentVolumeStepCount, 3);
                     //video.volume = Math.max(0, Math.min(1, Math.round((video.volume - 0.1) * 100) / 100));
                 }
-                displayVolume();
+                triggerTopMiddleText('volume');
  
                 if (video.volume == 0)
                     triggerCenterSymbol('🔇');
                 else
                     triggerCenterSymbol('🔉');
  
+            // / to go to search box
+            } else if (e.key === '/') {
+                const searchInput = document.querySelector('input[role="combobox"][type="search"][placeholder="Search"]');
+                searchInput.focus();
+                searchInput.select();
+                return;
+ 
+            // Trigger SharePoint's keyboard shortcuts / advanced features
             } else {
                 // Adapted from [Sharepoint Keyboard Shortcuts] by [CyrilSLi], MIT License
                 // https://greasyfork.org/en/scripts/524190-sharepoint-keyboard-shortcuts
                 const keys = {
                     Space: document.querySelector('[aria-description*="Alt + K"]'),
+                    KeyK: document.querySelector('[aria-description*="Alt + K"]'),
+                    KeyJ: document.querySelector('[aria-description*="Alt + J"]'),
+                    KeyL: document.querySelector('[aria-description*="Alt + L"]'),
                     KeyF: document.querySelector('[aria-description*="Alt + Enter"]'),
                     KeyM: document.querySelector('[aria-description*="Alt + M"]'),
                     KeyC: document.querySelector('[aria-description*="Alt + C"]'),
                     KeyA: document.querySelector('[aria-description*="Alt + A"]'),
                 }
  
-                if (e.code === 'Space') {
+                if (keys.hasOwnProperty(e.code))
+                    keys[e.code].click();
+ 
+ 
+                if (e.code === 'Space' || e.code === 'KeyK') {
                     if (video.paused)
-                        triggerCenterSymbol('▶');
-                    else
                         triggerCenterSymbol('⏸');
+                    else
+                        triggerCenterSymbol('▶');
+ 
+                } else if (e.code === 'KeyC') {
+                    const items = [...document.querySelectorAll('[role="menuitemradio"]')];
+                    const menuitem = document.querySelector('button[role="menuitem"][aria-label="Captions"]');
+                    const currentIndex = items.findIndex(item => item.getAttribute('aria-checked') === 'true');
+ 
+                    if (currentIndex >= items.length - 1) {
+                        items[0].click();
+                        menuitem.setAttribute('aria-checked', 'false');
+ 
+                    } else if (currentIndex < items.length - 1) {
+                        items[currentIndex + 1].click();
+                        menuitem.setAttribute('aria-checked', 'true');
+                    }
  
                 } else if (e.code === 'KeyM')
                     if (video.muted)
                         triggerCenterSymbol('🔊');
                     else
                         triggerCenterSymbol('🔇');
- 
-                if (keys.hasOwnProperty(e.code))
-                    keys[e.code].click();
             }
+ 
+            document.querySelector(".fluent-critical-ui-container").focus();
         });
  
     });
