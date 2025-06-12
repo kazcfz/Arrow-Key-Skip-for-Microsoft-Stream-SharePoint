@@ -1,0 +1,27 @@
+{
+    "manifest_version": 3,
+    "name": "Better Keyboard Shortcuts for Microsoft SharePoint",
+    "version": "1.3.0",
+    "description": "Simpler keyboard shortcuts with visual indicators for Microsoft SharePoint videos",
+    "permissions": [],
+    "content_scripts": [
+      {
+        "matches": ["https://*.sharepoint.com/*"],
+        "js": ["content.js"],
+        "all_frames": true
+      }
+    ],
+    "icons": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    },
+    "action": {},
+    "browser_specific_settings": {
+      "gecko": {
+        "id": "better-keyboard-shortcuts-for-microsoft-sharepoint@kazcfz.com"
+      }
+    }
+
+}
+  
