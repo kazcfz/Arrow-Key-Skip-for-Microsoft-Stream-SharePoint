@@ -14,15 +14,25 @@
 
 | Keyboard Shortcut | Effect |
 | :---------------: | :----- |
-| <kbd>Space</kbd>  | Play/Pause |
-| <kbd>↑</kbd>      | Volume up |
-| <kbd>↓</kbd>      | Volume down |
-| <kbd>←</kbd>      | Skip backward |
-| <kbd>→</kbd>      | Skip forward |
-| <kbd>f</kbd>      | Full screen enter/exit |
-| <kbd>m</kbd>      | Mute/Unmute |
-| <kbd>a</kbd>      | Noise suppression on/off |
-| <kbd>c</kbd>      | Captions |
+| <kbd>Space</kbd> / <kbd>k</kbd>   | Play/Pause |
+| <kbd>↑</kbd>                      | Volume up |
+| <kbd>↓</kbd>                      | Volume down |
+| <kbd>←</kbd>                      | Skip backward (5s) |
+| <kbd>→</kbd>                      | Skip forward (5s) |
+| <kbd>j</kbd>                      | Skip backward (10s) |
+| <kbd>l</kbd>                      | Skip forward (10s) |
+| <kbd>0</kbd> – <kbd>9</kbd>       | Skip to 0% – 90% of video |
+| <kbd>Home</kbd>                   | Skip to start of video |
+| <kbd>End</kbd>                    | Skip to end of video |
+| <kbd>,</kbd>                      | Skip to previous frame |
+| <kbd>.</kbd>                      | Skip to next frame |
+| <kbd><</kbd>                      | Decrease playback rate |
+| <kbd>></kbd>                      | Increase playback rate |
+| <kbd>f</kbd>                      | Full screen toggle |
+| <kbd>m</kbd>                      | Mute toggle |
+| <kbd>a</kbd>                      | Noise suppression toggle |
+| <kbd>c</kbd>                      | Captions |
+| <kbd>/</kbd>                      | Search box |
 
 <br><br>
 ## ⬇️ Getting started
