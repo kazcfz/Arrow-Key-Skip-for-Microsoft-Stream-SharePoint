@@ -1,26 +1,26 @@
 // ==UserScript==
-// @name         Better Keyboard Shortcuts for Microsoft Stream/SharePoint
+// @name         Better Keyboard Shortcuts for Microsoft SharePoint
 // @namespace    http://tampermonkey.net/
-// @version      1.2.0
-// @description  Simpler keyboard shorcuts with visual indicators for Microsoft Stream/SharePoint videos
+// @version      1.2.1
+// @description  Simpler keyboard shorcuts with visual indicators for Microsoft SharePoint videos
 // @author       kazcfz
 // @include      https://*.sharepoint.com/*
 // @icon         https://res-1.cdn.office.net/shellux/stream_24x.12dba766a9c30382b781c971070dc87c.svg
 // @grant        none
 // @license      MIT
-// @downloadURL https://update.greasyfork.org/scripts/538268/Better%20Keyboard%20Shortcuts%20for%20Microsoft%20StreamSharePoint.user.js
-// @updateURL https://update.greasyfork.org/scripts/538268/Better%20Keyboard%20Shortcuts%20for%20Microsoft%20StreamSharePoint.meta.js
 // ==/UserScript==
-
+ 
 /* eslint curly: "off" */
-
+ 
 (function () {
     'use strict';
-
+ 
     // Wait until .oneplayer-root exists in the DOM, then run callback with it
     function waitForOnePlayerRoot(callback) {
+        console.log("waiting");
         const root = document.querySelector('.oneplayer-root') || document.querySelector('.OnePlayer-container');
         if (root) {
+            console.log("found");
             callback(root);
             return;
         }
@@ -33,11 +33,12 @@
         });
         docObserver.observe(document.body || document.documentElement, { childList: true, subtree: true });
     }
-
+ 
     waitForOnePlayerRoot(videoRoot => {
+        console.log("executing");
         if (getComputedStyle(videoRoot).position === 'static')
             videoRoot.style.position = 'relative';
-
+ 
         // Overlay to indicate Skip
         const skipOverlay = document.createElement('div');
         skipOverlay.style.position = 'absolute';
@@ -60,7 +61,7 @@
         skipOverlay.style.minHeight = '75px';
         skipOverlay.style.textAlign = 'center';
         videoRoot.appendChild(skipOverlay);
-
+ 
         // Overlay to indicate Volume
         const volumeOverlay = document.createElement('div');
         volumeOverlay.style.position = 'absolute';
@@ -85,7 +86,7 @@
         volumeOverlay.style.minHeight = '30px';
         volumeOverlay.style.textAlign = 'center';
         videoRoot.appendChild(volumeOverlay);
-
+ 
         // Overlay to indicate Play/Pause
         const centerOverlay = document.createElement('div');
         centerOverlay.style.position = 'absolute';
@@ -107,12 +108,13 @@
         centerOverlay.style.alignItems = 'center';
         centerOverlay.style.justifyContent = 'center';
         centerOverlay.style.textAlign = 'center';
+        centerOverlay.style.color = 'rgba(255,255,255,0.85)';
         videoRoot.appendChild(centerOverlay);
-
+ 
         const centerSymbol = document.createElement('span');
         centerSymbol.style.opacity = '1';
         centerOverlay.appendChild(centerSymbol);
-
+ 
         // Overlay text for current volume
         const volumeText = document.createElement('div');
         volumeText.style.fontSize = '17px';
@@ -120,13 +122,13 @@
         volumeText.style.color = 'rgba(255,255,255,0.85)';
         volumeText.style.userSelect = 'none';
         volumeOverlay.appendChild(volumeText);
-
+ 
         // Overlay container for left/right triangles
         const trianglesContainer = document.createElement('div');
         trianglesContainer.style.display = 'flex';
         trianglesContainer.style.gap = '10px';
         skipOverlay.appendChild(trianglesContainer);
-
+ 
         // Add triangles into its container
         const triangles = [];
         for (let i = 0; i < 3; i++) {
@@ -137,7 +139,7 @@
             trianglesContainer.appendChild(tri);
             triangles.push(tri);
         }
-
+ 
         // Overlay text for seconds skipped
         const secondsText = document.createElement('div');
         secondsText.style.fontSize = '14px';
@@ -145,12 +147,12 @@
         secondsText.style.color = 'rgba(255,255,255,0.85)';
         secondsText.style.userSelect = 'none';
         skipOverlay.appendChild(secondsText);
-
+ 
         let hideTimeoutSkipOverlay;
         let hideTimeoutVolumeOverlay;
         let hideTimeoutCenterOverlay;
         let animTimeouts = [];
-
+ 
         // Displays overlay triangle animation and seconds skipped
         const secondsToSkip = 5;
         function showAnimatedTriangles(side) {
@@ -158,32 +160,32 @@
             clearTimeout(hideTimeoutSkipOverlay);
             animTimeouts.forEach(t => clearTimeout(t));
             animTimeouts = [];
-
+ 
             const isLeft = side === 'left';
             const char = isLeft ? '◀' : '▶';
             const order = isLeft ? [2, 1, 0] : [0, 1, 2];
-
+ 
             triangles.forEach(t => {
                 t.textContent = char;
                 t.style.transition = 'none';
                 t.style.color = 'rgba(255,255,255,0.3)';
             });
-
+ 
             // Force style flush to apply the color immediately before re-enabling transitions
             void skipOverlay.offsetHeight;
             triangles.forEach(t => { t.style.transition = 'color 0.3s ease'; });
-
+ 
             secondsText.textContent = `${secondsToSkip} seconds`;
-
+ 
             skipOverlay.style.opacity = '1';
             skipOverlay.style.left = isLeft ? '10%' : 'auto';
             skipOverlay.style.right = isLeft ? 'auto' : '10%';
             skipOverlay.style.textAlign = 'center';
-
+ 
             triangles[order[0]].style.color = 'rgba(255,255,255,0.75)';
-
+ 
             const interval = 200;
-
+ 
             for (let step = 2; step <= 3; step++) {
                 animTimeouts.push(setTimeout(() => {
                     if (step === 2) {
@@ -197,10 +199,10 @@
                     }
                 }, (step - 1) * interval));
             }
-
+ 
             hideTimeoutSkipOverlay = setTimeout(() => { skipOverlay.style.opacity = '0'; }, 3.3 * interval);
         }
-
+ 
         // Checks that the video player is focused
         function isInOnePlayerRoot(element) {
             while (element) {
@@ -210,18 +212,18 @@
             }
             return false;
         }
-
+ 
         let video = null;
-
+ 
         function setupVideo(v) {
             if (!v || video === v)
                 return;
             video = v;
         }
-
+ 
         // Initial attempt to find video
         setupVideo(videoRoot.querySelector('video'));
-
+ 
         // Observe videoRoot subtree for added/removed video
         const observer = new MutationObserver(mutations => {
             for (const mutation of mutations)
@@ -235,18 +237,18 @@
                                 setupVideo(v);
                         }
         });
-
+ 
         observer.observe(videoRoot, { childList: true, subtree: true });
-
-
+ 
+ 
         function triggerCenterSymbol(symbol) {
             clearTimeout(hideTimeoutCenterOverlay);
-
+ 
             centerOverlay.style.width = '75px';
             centerOverlay.style.height = '75px';
             centerOverlay.style.transition = 'opacity 0.1s ease';
             centerOverlay.style.opacity = '1';
-
+ 
             hideTimeoutCenterOverlay = setTimeout(() => {
                 centerOverlay.style.transition = 'width 0.6s ease, height 0.6s ease, font-size 0.6s ease, opacity 0.6s ease';
                 centerOverlay.style.width = `${parseFloat(getComputedStyle(centerOverlay).width) + 25}px`;
@@ -254,7 +256,7 @@
                 centerOverlay.style.fontSize = `${parseFloat(getComputedStyle(centerOverlay).fontSize) + 22.5}px`;
                 centerOverlay.style.opacity = '0';
             }, 60);
-
+ 
             centerSymbol.textContent = symbol;
             if (symbol === '🔊' || symbol === '🔇') {
                 centerSymbol.style.marginBottom = '9px';
@@ -274,8 +276,8 @@
                 centerOverlay.style.fontSize = '68px';
             }
         }
-
-
+ 
+ 
         // Math time: MS Stream/SharePoint handles volume steps exponentially (cubically) rather than linearly
         // The sequence is (steps of 0.1)^3, counting down from 1 to 0:
         // volume (base 𝑛) = (1 − 0.1 × 𝑛)^3, where 𝑛 = 0, 1, 2, ..., 10.
@@ -287,12 +289,12 @@
                 volumeText.textContent = `${Math.round(volumePercent)}%`;
             else
                 volumeText.textContent = `${volumePercent.toFixed(1)}%`;
-
+ 
             volumeOverlay.style.opacity = '1';
             clearTimeout(hideTimeoutVolumeOverlay);
             hideTimeoutVolumeOverlay = setTimeout(() => { volumeOverlay.style.opacity = '0'; }, 600);
         }
-
+ 
         document.addEventListener('keydown', e => {
             if (!video)
                 return;
@@ -300,19 +302,19 @@
                 return;
             if (document.activeElement && !isInOnePlayerRoot(document.activeElement))
                 return;
-
+ 
             e.preventDefault();
-
+ 
             // → to skip forward
             if (e.code === 'ArrowRight') {
                 video.currentTime = Math.min(video.duration, video.currentTime + secondsToSkip);
                 showAnimatedTriangles('right');
-
+ 
             // ← to skip backward
             } else if (e.code === 'ArrowLeft') {
                 video.currentTime = Math.max(0, video.currentTime - secondsToSkip);
                 showAnimatedTriangles('left');
-
+ 
             // ↑ to increase volume
             } else if (e.code === 'ArrowUp') {
                 if (currentVolumeStepCount > 0) {
@@ -322,7 +324,7 @@
                 }
                 displayVolume();
                 triggerCenterSymbol('🔊');
-
+ 
             // ↓ to decrease volume
             } else if (e.code === 'ArrowDown') {
                 if (currentVolumeStepCount < 10) {
@@ -331,12 +333,12 @@
                     //video.volume = Math.max(0, Math.min(1, Math.round((video.volume - 0.1) * 100) / 100));
                 }
                 displayVolume();
-
+ 
                 if (video.volume == 0)
                     triggerCenterSymbol('🔇');
                 else
                     triggerCenterSymbol('🔉');
-
+ 
             } else {
                 // Adapted from [Sharepoint Keyboard Shortcuts] by [CyrilSLi], MIT License
                 // https://greasyfork.org/en/scripts/524190-sharepoint-keyboard-shortcuts
@@ -347,23 +349,23 @@
                     KeyC: document.querySelector('[aria-description*="Alt + C"]'),
                     KeyA: document.querySelector('[aria-description*="Alt + A"]'),
                 }
-
+ 
                 if (e.code === 'Space') {
                     if (video.paused)
                         triggerCenterSymbol('▶');
                     else
                         triggerCenterSymbol('⏸');
-
+ 
                 } else if (e.code === 'KeyM')
                     if (video.muted)
                         triggerCenterSymbol('🔊');
                     else
                         triggerCenterSymbol('🔇');
-
+ 
                 if (keys.hasOwnProperty(e.code))
                     keys[e.code].click();
             }
         });
-
+ 
     });
 })();
